@@ -1,0 +1,62 @@
+name: CI/CD for Airflow
+
+on:
+  push:
+    branches:
+      - main  # Укажите ветку для деплоя
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout репозиторий
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Установка Docker (если требуется)
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # Сборка Docker-образа
+      - name: Build Docker image
+        run: |
+          docker build -t my-airflow-image .
+
+      # Тестирование Airflow DAGs
+      - name: Run DAG validation
+        run: |
+          docker run --rm -v $(pwd)/dags:/opt/airflow/dags my-airflow-image airflow dags list
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Логин в контейнерный реестр (например, Docker Hub или GitHub Container Registry)
+      - name: Log in to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Push Docker-образ в реестр
+      - name: Push Docker image
+        run: |
+          docker tag my-airflow-image mydockerhubuser/my-airflow-image:latest
+          docker push mydockerhubuser/my-airflow-image:latest
+
+      # Деплой на сервер (например, через SSH)
+      - name: Deploy to Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          docker pull mydockerhubuser/my-airflow-image:latest
+          docker-compose down
+          docker-compose up -d
+          EOF
