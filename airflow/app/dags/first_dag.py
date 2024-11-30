@@ -9,7 +9,7 @@ from airflow.decorators import dag, task
     schedule=None,
     start_date=pendulum.datetime(2022, 12, 12, tz="UTC"),
     catchup=False,
-    tags=["example"],
+    tags=["darksecrets"],
 )
 def my_very_own_etl():
     @task()
