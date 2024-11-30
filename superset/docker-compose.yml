@@ -10,7 +10,7 @@ services:
     networks:
       - supernet
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "superset"]
+      test: ["CMD", "pg_isready", "-U", "store"]
       interval: 10s
       retries: 5
       start_period: 5s
