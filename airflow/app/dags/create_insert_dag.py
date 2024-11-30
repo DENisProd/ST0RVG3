@@ -104,7 +104,7 @@ def create_tables_and_load_csv():
         if conn_uri.startswith('postgres://'):
             conn_uri = conn_uri.replace('postgres://', 'postgresql+psycopg2://', 1)
         elif not conn_uri.startswith('postgresql'):
-            conn_uri = 'postgresql+psycopg2://' + conn_uri
+            conn_uri = 'postgresql://superset:password@localhost:5444/superset'
 
         engine = create_engine(conn_uri)
 
@@ -148,7 +148,7 @@ def create_tables_and_load_csv():
         if conn_uri.startswith('postgres://'):
             conn_uri = conn_uri.replace('postgres://', 'postgresql+psycopg2://', 1)
         elif not conn_uri.startswith('postgresql'):
-            conn_uri = 'postgresql+psycopg2://' + conn_uri
+            conn_uri = 'postgresql://superset:password@localhost:5444/superset'
 
         engine = create_engine(conn_uri)
 
