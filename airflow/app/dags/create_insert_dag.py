@@ -34,45 +34,46 @@ CREATE TABLE IF NOT EXISTS Customers (
         (CustomerTypeID = 2 AND RegistrationDate IS NOT NULL AND DateOfBirth IS NULL)
     )
 );
-
-CREATE TABLE IF NOT EXISTS CreditProducts (
-    CreditProductID SERIAL PRIMARY KEY,
-    ProductName VARCHAR(255) NOT NULL,
-    InterestRate DECIMAL(5, 2) NOT NULL CHECK (InterestRate >= 0),
-    MaxLoanAmount NUMERIC(15, 2) NOT NULL CHECK (MaxLoanAmount > 0),
-    MinRepaymentTerm INTEGER NOT NULL CHECK (MinRepaymentTerm > 0),
-    CollateralRequired BOOLEAN NOT NULL DEFAULT FALSE
-);
-
-CREATE TABLE IF NOT EXISTS CreditAgreements (
-    CreditAgreementID SERIAL PRIMARY KEY,
-    CustomerID INTEGER NOT NULL,
-    CreditProductID INTEGER NOT NULL,
-    AgreementDate DATE NOT NULL,
-    LoanAmount NUMERIC(15, 2) NOT NULL CHECK (LoanAmount > 0),
-    LoanTerm INTEGER NOT NULL CHECK (LoanTerm > 0),
-    InterestRate DECIMAL(5, 2) NOT NULL CHECK (InterestRate >= 0),
-    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
-    FOREIGN KEY (CreditProductID) REFERENCES CreditProducts(CreditProductID) ON DELETE RESTRICT
-);
-
-CREATE TABLE IF NOT EXISTS TransactionTypes (
-    TransactionTypeID SERIAL PRIMARY KEY,
-    TransactionTypeName VARCHAR(100) NOT NULL UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS CreditTransactions (
-    TransactionID SERIAL PRIMARY KEY,
-    CustomerID INTEGER NOT NULL,
-    CreditAgreementID INTEGER NOT NULL,
-    TransactionDate DATE NOT NULL,
-    TransactionAmount NUMERIC(15, 2) NOT NULL,
-    TransactionTypeID INTEGER NOT NULL,
-    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
-    FOREIGN KEY (CreditAgreementID) REFERENCES CreditAgreements(CreditAgreementID) ON DELETE CASCADE,
-    FOREIGN KEY (TransactionTypeID) REFERENCES TransactionTypes(TransactionTypeID) ON DELETE RESTRICT
-);
 """
+
+# CREATE TABLE IF NOT EXISTS CreditProducts (
+#     CreditProductID SERIAL PRIMARY KEY,
+#     ProductName VARCHAR(255) NOT NULL,
+#     InterestRate DECIMAL(5, 2) NOT NULL CHECK (InterestRate >= 0),
+#     MaxLoanAmount NUMERIC(15, 2) NOT NULL CHECK (MaxLoanAmount > 0),
+#     MinRepaymentTerm INTEGER NOT NULL CHECK (MinRepaymentTerm > 0),
+#     CollateralRequired BOOLEAN NOT NULL DEFAULT FALSE
+# );
+
+# CREATE TABLE IF NOT EXISTS CreditAgreements (
+#     CreditAgreementID SERIAL PRIMARY KEY,
+#     CustomerID INTEGER NOT NULL,
+#     CreditProductID INTEGER NOT NULL,
+#     AgreementDate DATE NOT NULL,
+#     LoanAmount NUMERIC(15, 2) NOT NULL CHECK (LoanAmount > 0),
+#     LoanTerm INTEGER NOT NULL CHECK (LoanTerm > 0),
+#     InterestRate DECIMAL(5, 2) NOT NULL CHECK (InterestRate >= 0),
+#     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
+#     FOREIGN KEY (CreditProductID) REFERENCES CreditProducts(CreditProductID) ON DELETE RESTRICT
+# );
+
+# CREATE TABLE IF NOT EXISTS TransactionTypes (
+#     TransactionTypeID SERIAL PRIMARY KEY,
+#     TransactionTypeName VARCHAR(100) NOT NULL UNIQUE
+# );
+
+# CREATE TABLE IF NOT EXISTS CreditTransactions (
+#     TransactionID SERIAL PRIMARY KEY,
+#     CustomerID INTEGER NOT NULL,
+#     CreditAgreementID INTEGER NOT NULL,
+#     TransactionDate DATE NOT NULL,
+#     TransactionAmount NUMERIC(15, 2) NOT NULL,
+#     TransactionTypeID INTEGER NOT NULL,
+#     FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID) ON DELETE CASCADE,
+#     FOREIGN KEY (CreditAgreementID) REFERENCES CreditAgreements(CreditAgreementID) ON DELETE CASCADE,
+#     FOREIGN KEY (TransactionTypeID) REFERENCES TransactionTypes(TransactionTypeID) ON DELETE RESTRICT
+# );
+# """
 
 default_args = {
     "owner": "airflow",
@@ -99,14 +100,15 @@ def create_tables_and_load_csv():
         """
         connection = BaseHook.get_connection(POSTGRES_CONN_ID)
         engine = create_engine(connection.get_uri())
+        print(engine)
 
-        try:
-            with engine.connect() as conn:
-                conn.execute(text(CREATE_TABLES_SQL))
-                print("Таблицы успешно созданы или уже существуют.")
-        except SQLAlchemyError as e:
-            print(f"Ошибка при создании таблиц: {e}")
-            raise
+        # try:
+        #     with engine.connect() as conn:
+        #         conn.execute(text(CREATE_TABLES_SQL))
+        #         print("Таблицы успешно созданы или уже существуют.")
+        # except SQLAlchemyError as e:
+        #     print(f"Ошибка при создании таблиц: {e}")
+        #     raise
 
 
     @task()
