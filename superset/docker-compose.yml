@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: store
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    networks:
+      - supernet
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "superset"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+  superset:
+    image: apache/superset:latest
+    container_name: superset
+    ports:
+      - "8088:8088"
+    environment:
+      DATABASE_URL: postgresql+psycopg2:://superset:password@postgres:5432/store
+      SUPERSET_SECRET_KEY: "this_is_a_secret_key"
+      REDIS_URL: "redis://redis:6379/0"
+      SUPERSET_ADMIN_LOGIN: "${SUPERSET_ADMIN_LOGIN}"
+      SUPERSET_ADMIN_PASSWORD: "${SUPERSET_ADMIN_PASSWORD}"
+    volumes:
+      - superset_home:/app/superset_home
+    depends_on:
+      - postgres
+    networks:
+      - supernet
+    entrypoint: >
+      /bin/sh -c "
+      superset db upgrade &&
+      superset fab create-admin --username ${SUPERSET_ADMIN_LOGIN} --password ${SUPERSET_ADMIN_PASSWORD} --firstname Admin --lastname User --email admin@example.com &&
+      superset init &&
+      superset run -h 0.0.0.0 -p 8088 --with-threads --reload --debugger
+      "
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+networks:
+  supernet:
+    driver: bridge
+
+volumes:
+  superset_home:
+  postgres-volume:
