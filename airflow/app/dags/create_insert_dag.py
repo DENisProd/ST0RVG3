@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Конфигурация подключения PostgreSQL через Airflow Connection
-POSTGRES_CONN_ID = 'superset_db'  # Убедитесь, что подключение настроено в Airflow
+POSTGRES_CONN_ID = 'store_db'  # Убедитесь, что подключение настроено в Airflow
 
 LOCAL_REPO_PATH = r'C:\Users\HP\Documents\GitHub\ST0RVG3\airflow\app\data'
 
