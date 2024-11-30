@@ -7,9 +7,11 @@ services:
     environment:
       POSTGRES_USER: superset
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: superset
+      POSTGRES_DATABASE: superset
     volumes:
       - postgres-volume:/var/lib/postgresql/data
+      - .:/docker-entrypoint-initdb.d
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sq
     networks:
       - supernet
     ports:
@@ -17,7 +19,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway" 
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "superset"]
+      test: ["CMD", "pg_isready -U superset -d superset"]
       interval: 10s
       retries: 5
       start_period: 5s
