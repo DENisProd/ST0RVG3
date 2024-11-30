@@ -1,27 +1,39 @@
 services:
   postgres:
-    image: postgres:16
+    build:
+      context: ./postgres
+    image: postgres-superset:latest
+    container_name: superset_postgres
     environment:
       POSTGRES_USER: superset
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: store
+      POSTGRES_DB: superset
     volumes:
       - postgres-volume:/var/lib/postgresql/data
     networks:
       - supernet
+    ports:
+      - "5444:5432"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "store"]
+      test: ["CMD", "pg_isready", "-U", "superset"]
       interval: 10s
       retries: 5
       start_period: 5s
     restart: always
   superset:
-    image: apache/superset:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: custom-superset:latest
     container_name: superset
+    env_file:
+      - .env
     ports:
       - "8088:8088"
     environment:
-      DATABASE_URL: postgresql+psycopg2:://superset:password@postgres:5432/store
+      DATABASE_URL: postgresql+psycopg2://superset:password@superset_postgres:5432/superset
       SUPERSET_SECRET_KEY: "this_is_a_secret_key"
       REDIS_URL: "redis://redis:6379/0"
       SUPERSET_ADMIN_LOGIN: "${SUPERSET_ADMIN_LOGIN}"
