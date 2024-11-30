@@ -161,10 +161,10 @@ def create_tables_and_load_csv():
     #             logger.error(f"Ошибка при вставке данных в таблицу {table}: {e}") 
     #             raise  
 
-    # create_tables_task = create_tables()
+    create_tables_task = create_tables()
     # read_csv_task = read_csv_files() 
     # insert_data_task = insert_data_into_postgres(read_csv_task) 
 
-    # create_tables_task >> read_csv_task >> insert_data_task 
+    create_tables_task 
 
 dag = create_tables_and_load_csv()
