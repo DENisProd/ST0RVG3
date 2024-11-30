@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 
 # Конфигурация подключения PostgreSQL через Airflow Connection
-POSTGRES_CONN_ID = 'superset_db'  # Убедитесь, что подключение настроено в Airflow
+POSTGRES_CONN_ID = 'postgresql://superset:password@localhost:5444/superset'  # Убедитесь, что подключение настроено в Airflow
 
 # Заглушка локального пути
 LOCAL_REPO_PATH = r'C:\Users\HP\Documents\GitHub\ST0RVG3\airflow\app\data'
