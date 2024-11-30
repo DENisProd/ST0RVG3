@@ -101,69 +101,70 @@ def create_tables_and_load_csv():
         connection = BaseHook.get_connection(POSTGRES_CONN_ID) 
         # Заменяем 'postgres://' на 'postgresql+psycopg2://'
         conn_uri = connection.get_uri()
-        if conn_uri.startswith('postgres://'):
-            conn_uri = 'postgresql://superset:password@localhost:5444/superset'
-        elif not conn_uri.startswith('postgresql'):
-            conn_uri = 'postgresql://superset:password@localhost:5444/superset'
+        print(conn_uri)
+    #     if conn_uri.startswith('postgres://'):
+    #         conn_uri = conn_uri.replace('postgres://', 'postgresql+psycopg2://', 1)
+    #     elif not conn_uri.startswith('postgresql'):
+    #         conn_uri = ''postgresql+psycopg2://' + conn_uri'
 
-        engine = create_engine(conn_uri)
+    #     engine = create_engine(conn_uri)
 
-        try: 
-            with engine.connect() as conn: 
-                conn.execute(text(CREATE_TABLES_SQL)) 
-                logger.info("Таблицы успешно созданы или уже существуют.")
-        except SQLAlchemyError as e: 
-            logger.error(f"Ошибка при создании таблиц: {e}") 
-            raise 
+    #     try: 
+    #         with engine.connect() as conn: 
+    #             conn.execute(text(CREATE_TABLES_SQL)) 
+    #             logger.info("Таблицы успешно созданы или уже существуют.")
+    #     except SQLAlchemyError as e: 
+    #         logger.error(f"Ошибка при создании таблиц: {e}") 
+    #         raise 
 
-    @task() 
-    def read_csv_files(): 
-        """ 
-        Читает CSV-файлы из локального репозитория и возвращает их в виде словаря pandas DataFrame. 
-        """ 
-        data_frames = {} 
-        for table, filename in CSV_FILES.items(): 
-            file_path = os.path.join(LOCAL_REPO_PATH, filename) 
-            if os.path.exists(file_path): 
-                try: 
-                    df = pd.read_csv(file_path) 
-                    data_frames[table] = df 
-                    logger.info(f"Файл {filename} успешно прочитан для таблицы {table}.") 
-                except pd.errors.ParserError as e: 
-                    logger.error(f"Ошибка при чтении файла {filename}: {e}") 
-                    raise Exception(f"Ошибка при чтении файла {filename}: {e}") 
-            else: 
-                logger.error(f"Файл {filename} не найден по пути {file_path}.") 
-                raise FileNotFoundError(f"Файл {filename} не найден по пути {file_path}.") 
-        return data_frames 
+    # @task() 
+    # def read_csv_files(): 
+    #     """ 
+    #     Читает CSV-файлы из локального репозитория и возвращает их в виде словаря pandas DataFrame. 
+    #     """ 
+    #     data_frames = {} 
+    #     for table, filename in CSV_FILES.items(): 
+    #         file_path = os.path.join(LOCAL_REPO_PATH, filename) 
+    #         if os.path.exists(file_path): 
+    #             try: 
+    #                 df = pd.read_csv(file_path) 
+    #                 data_frames[table] = df 
+    #                 logger.info(f"Файл {filename} успешно прочитан для таблицы {table}.") 
+    #             except pd.errors.ParserError as e: 
+    #                 logger.error(f"Ошибка при чтении файла {filename}: {e}") 
+    #                 raise Exception(f"Ошибка при чтении файла {filename}: {e}") 
+    #         else: 
+    #             logger.error(f"Файл {filename} не найден по пути {file_path}.") 
+    #             raise FileNotFoundError(f"Файл {filename} не найден по пути {file_path}.") 
+    #     return data_frames 
 
-    @task() 
-    def insert_data_into_postgres(data_frames: dict): 
-        """ 
-        Вставляет данные из pandas DataFrame в соответствующие таблицы. 
-        """ 
-        connection = BaseHook.get_connection(POSTGRES_CONN_ID) 
-        # Заменяем 'postgres://' на 'postgresql+psycopg2://'
-        conn_uri = connection.get_uri()
-        if conn_uri.startswith('postgres://'):
-            conn_uri = 'postgresql://superset:password@localhost:5444/superset'
-        elif not conn_uri.startswith('postgresql'):
-            conn_uri = 'postgresql://superset:password@localhost:5444/superset'
+    # @task() 
+    # def insert_data_into_postgres(data_frames: dict): 
+    #     """ 
+    #     Вставляет данные из pandas DataFrame в соответствующие таблицы. 
+    #     """ 
+    #     connection = BaseHook.get_connection(POSTGRES_CONN_ID) 
+    #     # Заменяем 'postgres://' на 'postgresql+psycopg2://'
+    #     conn_uri = connection.get_uri()
+    #     if conn_uri.startswith('postgres://'):
+    #         conn_uri = conn_uri.replace('postgres://', 'postgresql+psycopg2://', 1)
+    #     elif not conn_uri.startswith('postgresql'):
+    #         conn_uri = 'postgresql://superset:password@localhost:5444/superset'
 
-        engine = create_engine(conn_uri)
+    #     engine = create_engine(conn_uri)
 
-        for table, df in data_frames.items(): 
-            try: 
-                df.to_sql(table, engine, if_exists='append', index=False) 
-                logger.info(f"Данные из {table} успешно вставлены.") 
-            except SQLAlchemyError as e: 
-                logger.error(f"Ошибка при вставке данных в таблицу {table}: {e}") 
-                raise  
+    #     for table, df in data_frames.items(): 
+    #         try: 
+    #             df.to_sql(table, engine, if_exists='append', index=False) 
+    #             logger.info(f"Данные из {table} успешно вставлены.") 
+    #         except SQLAlchemyError as e: 
+    #             logger.error(f"Ошибка при вставке данных в таблицу {table}: {e}") 
+    #             raise  
 
-    create_tables_task = create_tables()
-    read_csv_task = read_csv_files() 
-    insert_data_task = insert_data_into_postgres(read_csv_task) 
+    # create_tables_task = create_tables()
+    # read_csv_task = read_csv_files() 
+    # insert_data_task = insert_data_into_postgres(read_csv_task) 
 
-    create_tables_task >> read_csv_task >> insert_data_task 
+    # create_tables_task >> read_csv_task >> insert_data_task 
 
 dag = create_tables_and_load_csv()
