@@ -10,7 +10,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Конфигурация подключения PostgreSQL через Airflow Connection
+<<<<<<< HEAD
 POSTGRES_CONN_ID = 'postgresql://superset:password@localhost:5444/superset'  # Убедитесь, что подключение настроено в Airflow
+=======
+POSTGRES_CONN_ID = 'store_db'  # Убедитесь, что подключение настроено в Airflow
+>>>>>>> b3c3e1ae14474afee0127ebb3b445ca6eef47d42
 
 LOCAL_REPO_PATH = r'C:\Users\HP\Documents\GitHub\ST0RVG3\airflow\app\data'
 
@@ -102,9 +106,11 @@ def create_tables_and_load_csv():
         # Заменяем 'postgres://' на 'postgresql+psycopg2://'
         conn_uri = connection.get_uri()
         if conn_uri.startswith('postgres://'):
-            conn_uri = conn_uri.replace('postgres://', 'postgresql+psycopg2://', 1)
+            conn_uri = conn_uri.replace('postgres://', 'postgresql://', 1)
+            print(conn_uri)
         elif not conn_uri.startswith('postgresql'):
-            conn_uri = 'postgresql+psycopg2://' + conn_uri
+            conn_uri = 'postgresql://' + conn_uri
+            print(conn_uri)
 
         engine = create_engine(conn_uri)
 
@@ -146,9 +152,11 @@ def create_tables_and_load_csv():
         # Заменяем 'postgres://' на 'postgresql+psycopg2://'
         conn_uri = connection.get_uri()
         if conn_uri.startswith('postgres://'):
-            conn_uri = conn_uri.replace('postgres://', 'postgresql+psycopg2://', 1)
+            conn_uri = conn_uri.replace('postgres://', 'postgresql://', 1)
+            print(conn_uri)
         elif not conn_uri.startswith('postgresql'):
-            conn_uri = 'postgresql+psycopg2://' + conn_uri
+            conn_uri = 'postgresql://' + conn_uri
+            print(conn_uri)
 
         engine = create_engine(conn_uri)
 

@@ -3,3 +3,5 @@
 .env.development
 
 logs
+
+**/__pycache__/
