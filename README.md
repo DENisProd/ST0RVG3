@@ -36,6 +36,7 @@
     docker compose -f ./backend/docker-compose.yml up -d
 ```
 ## Архитектура
+![image](https://github.com/user-attachments/assets/688ab44b-51ea-40c1-9224-12317c9fb560)
 
 
 ## Примеры работы
