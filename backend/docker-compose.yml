@@ -60,6 +60,19 @@ services:
       - 'minio:/data/minio'
     command: minio server /data/minio --console-address ":9090"
 
+  storage:
+    image: denisproduction/storage:latest
+    container_name: storage
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - postgres_store
+    ports:
+      - "8082:8082"
+    networks:
+      - postgres
+      - spring
+
 networks:
   postgres:
     driver: bridge
