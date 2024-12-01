@@ -60,6 +60,8 @@ services:
     volumes:
       - 'minio:/data/minio'
     command: minio server /data/minio --console-address ":9090"
+    networks:
+      - spring
 
   storage:
     image: denisproduction/storage:latest
