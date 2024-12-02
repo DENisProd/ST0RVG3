@@ -50,6 +50,9 @@ x-airflow-common:
   # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
   # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
   image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.10.3}
+  networks:
+    - supernet
+    - postgres
   # build: .
   environment:
     &airflow-common-env
@@ -102,8 +105,6 @@ services:
       retries: 5
       start_period: 5s
     restart: always
-    networks:
-      - airflow
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -118,8 +119,6 @@ services:
       retries: 50
       start_period: 30s
     restart: always
-    networks:
-      - airflow
 
   airflow-webserver:
     <<: *airflow-common
@@ -133,8 +132,6 @@ services:
       retries: 5
       start_period: 30s
     restart: always
-    networks:
-      - airflow
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -150,8 +147,6 @@ services:
       retries: 5
       start_period: 30s
     restart: always
-    networks:
-      - airflow
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -169,8 +164,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
-    networks:
-      - airflow
     environment:
       <<: *airflow-common-env
       # Required to handle warm shutdown of the celery workers properly
@@ -192,8 +185,6 @@ services:
       retries: 5
       start_period: 30s
     restart: always
-    networks:
-      - airflow
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -203,8 +194,6 @@ services:
     <<: *airflow-common
     entrypoint: /bin/bash
     # yamllint disable rule:line-length
-    networks:
-      - airflow
     command:
       - -c
       - |
@@ -269,8 +258,6 @@ services:
     <<: *airflow-common
     profiles:
       - debug
-    networks:
-      - airflow
     environment:
       <<: *airflow-common-env
       CONNECTION_CHECK_MAX_COUNT: "0"
@@ -290,8 +277,6 @@ services:
       - flower
     ports:
       - "5555:5555"
-    networks:
-      - airflow
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
       interval: 30s
@@ -308,5 +293,7 @@ volumes:
   postgres-db-volume:
 
 networks:
-  airflow:
-    driver: bridge
+  supernet:
+    external: true
+  postgres:
+    external: true
