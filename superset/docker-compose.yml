@@ -14,6 +14,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sq
     networks:
       - supernet
+      - airflow
     ports:
       - "5444:5432"
     extra_hosts:
@@ -62,6 +63,8 @@ services:
 networks:
   supernet:
     driver: bridge
+  airflow:
+    external: true
 
 volumes:
   superset_home:

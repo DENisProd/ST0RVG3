@@ -12,6 +12,7 @@ services:
       - "5432:5432"
     networks:
       - postgres
+      - airflow
     restart: unless-stopped
   pgadmin_storage:
     container_name: pgadmin_storage
@@ -81,6 +82,8 @@ networks:
     driver: bridge
   spring:
     driver: bridge
+  airflow:
+    external: true
 
 volumes:
   postgres_store:

@@ -102,6 +102,8 @@ services:
       retries: 5
       start_period: 5s
     restart: always
+    networks:
+      - airflow
 
   redis:
     # Redis is limited to 7.2-bookworm due to licencing change
@@ -116,6 +118,8 @@ services:
       retries: 50
       start_period: 30s
     restart: always
+    networks:
+      - airflow
 
   airflow-webserver:
     <<: *airflow-common
@@ -129,6 +133,8 @@ services:
       retries: 5
       start_period: 30s
     restart: always
+    networks:
+      - airflow
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -144,6 +150,8 @@ services:
       retries: 5
       start_period: 30s
     restart: always
+    networks:
+      - airflow
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -161,6 +169,8 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+    networks:
+      - airflow
     environment:
       <<: *airflow-common-env
       # Required to handle warm shutdown of the celery workers properly
@@ -182,6 +192,8 @@ services:
       retries: 5
       start_period: 30s
     restart: always
+    networks:
+      - airflow
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -191,6 +203,8 @@ services:
     <<: *airflow-common
     entrypoint: /bin/bash
     # yamllint disable rule:line-length
+    networks:
+      - airflow
     command:
       - -c
       - |
@@ -255,6 +269,8 @@ services:
     <<: *airflow-common
     profiles:
       - debug
+    networks:
+      - airflow
     environment:
       <<: *airflow-common-env
       CONNECTION_CHECK_MAX_COUNT: "0"
@@ -274,6 +290,8 @@ services:
       - flower
     ports:
       - "5555:5555"
+    networks:
+      - airflow
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:5555/"]
       interval: 30s
@@ -288,3 +306,7 @@ services:
 
 volumes:
   postgres-db-volume:
+
+networks:
+  airflow:
+    driver: bridge

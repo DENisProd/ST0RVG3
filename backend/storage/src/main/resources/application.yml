@@ -26,8 +26,8 @@ spring:
 #minio file server configuration
 s3:
   url: http://minio:9000
-  accessKey: HeaIFfjGVHBS4jGB3YYr
-  secretKey: C9MbND36i8s2TlUJ4HAhPrc8ATuBnxizPfILui2R
+  accessKey: GpgQnQU3ccJEHTDTr7H8
+  secretKey: qAswYiaFsTtMMS61TCJOsMoSrrdoevQQhtd8Tf7Y
   bucketName: rawdata
 
 server:
