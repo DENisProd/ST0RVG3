@@ -9,9 +9,7 @@ services:
     volumes:
       - postgres_store:/data/postgres
     ports:
-      - "5432:5432"
-    networks:
-      - postgres
+      - "5424:5432"
     restart: unless-stopped
   pgadmin_storage:
     container_name: pgadmin_storage
@@ -24,8 +22,6 @@ services:
       - pgadmin3:/var/lib/pgadmin3
     ports:
       - "5050:80"
-    networks:
-      - postgres
     restart: unless-stopped
   keycloak:
     container_name: keycloak-ms2
@@ -34,7 +30,6 @@ services:
       - 9098:8080
     networks:
       - spring
-      - postgres
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
@@ -73,12 +68,9 @@ services:
     ports:
       - "8082:8082"
     networks:
-      - postgres
       - spring
 
 networks:
-  postgres:
-    driver: bridge
   spring:
     driver: bridge
 
