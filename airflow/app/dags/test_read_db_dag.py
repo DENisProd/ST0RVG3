@@ -2,6 +2,9 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.hooks.postgres_hook import PostgresHook
 from datetime import datetime
+from airflow.utils.log.logging_mixin import LoggingMixin
+
+logger = LoggingMixin().log
 
 # Функция для чтения данных из таблицы
 def read_from_customer_table():
@@ -16,7 +19,7 @@ def read_from_customer_table():
 
     # Выводим данные в логи
     for row in rows:
-        print(row)
+        logger.info(f"Row: {row}")
 
 # Создаем DAG
 with DAG(
