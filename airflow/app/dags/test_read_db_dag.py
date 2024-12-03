@@ -9,7 +9,7 @@ logger = LoggingMixin().log
 # Функция для чтения данных из таблицы
 def read_from_customer_table():
     # Используем подключение с ID `my_postgres_db`
-    postgres_hook = PostgresHook(postgres_conn_id="store_db")
+    postgres_hook = PostgresHook(postgres_conn_id="superset_db")
     conn = postgres_hook.get_conn()
     cursor = conn.cursor()
 
