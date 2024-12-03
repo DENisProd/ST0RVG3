@@ -4,7 +4,8 @@ from datetime import datetime
 from airflow.hooks.base_hook import BaseHook
 
 def test_db_connection():
-    conn = BaseHook.get_connection("store_db")  # ID подключения
+    conn = BaseHook.get_connection("superset_db")  # ID подключения
+    # conn = BaseHook.get_connection("store_db")  # ID подключения
     print(f"Host: {conn.host}, Schema: {conn.schema}, Login: {conn.login}")
 
 with DAG(
