@@ -7,6 +7,7 @@ docker compose -f ./airflow/docker-compose.yml build
 docker compose -f ./airflow/docker-compose.yml up -d
 
 docker network connect airflow_default postgres_store
+docker network connect airflow_default superset_postgres
 
 # docker network create airflow_net
 
