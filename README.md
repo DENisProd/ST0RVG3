@@ -24,8 +24,12 @@
     Password:
 
 ## Как развернуть?
-Пока что не красиво и изящно...
 
+```bash
+bash init.sh
+```
+
+Или по отдельности:
 ```bash
     docker compose -f ./airflow/docker-compose.yml build
     docker compose -f ./airflow/docker-compose.yml up -d
